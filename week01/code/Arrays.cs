@@ -8,12 +8,14 @@ public static class Arrays
     /// <returns>array of doubles that are the multiples of the supplied number</returns>
     public static double[] MultiplesOf(double number, int length)
     {
-        // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        //In this case I think we can use double[] because the return type is double[] and we are returning an array of doubles. I make it public so it can be accessed from other classes.Also, I make it static so it can be called without creating an instance of the class; I use the parameters double number and int length to specify the number to multiply and the length of the array to create. I will create a new array of doubles with the specified length, then use a for loop to fill the array with multiples of the number. Finally, I will return the array.//
 
-        return []; // replace this return statement with your own
+        double[] result = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = number * (i + 1);
+        }
+        return result;
     }
 
     /// <summary>
@@ -25,9 +27,14 @@ public static class Arrays
     /// </summary>
     public static void RotateListRight(List<int> data, int amount)
     {
-        // TODO Problem 2 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        //For this function, I will use data.GetRange to separate the original list into two parts: the last 'amount' elements (partA)and the rest of the list(partB) I will then clear the original list with data.RemoveRange, and add the two parts back in reverse order to achieve the rotation effect.//
+
+        List<int> partA = data.GetRange(data.Count - amount, amount);
+        List<int> partB = data.GetRange(0, data.Count - amount);
+
+        data.RemoveRange(0, data.Count);
+
+        data.AddRange(partA);
+        data.AddRange(partB);
     }
 }
