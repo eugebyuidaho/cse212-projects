@@ -11,7 +11,12 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (5), Sue (3) and
     // run until the queue is empty
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, Sue, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: Expected Bob, actual Sue. 
+    // The program returned Sue instead of Bob as the first player. 
+    // The error was in PersonQueue.cs in the Enqueue method: Insert(0, ...) added at the front instead of the back, 
+    // and since Dequeue also takes from the front, the strucuture behaved as a stak(LIFO) instead of a queue(FIFO). 
+    // This violates requirement 2. 
+    // Fixed by using _queue.Add(person) instead of _queue.Insert(0, person).
     public void TestTakingTurnsQueue_FiniteRepetition()
     {
         var bob = new Person("Bob", 2);
@@ -43,7 +48,9 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (5), Sue (3)
     // After running 5 times, add George with 3 turns.  Run until the queue is empty.
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, George, Sue, Tim, George, Tim, George
-    // Defect(s) Found: 
+    // Defect(s) Found: Expected Bob, actual Sue. Same defect as in TestTakingTurnsQueue_FiniteRepetition. 
+    // This also affected the player added midway, since they were added to the front of the queue instead of the back.
+    // Fixed by using _queue.Add(person) instead of _queue.Insert(0, person).
     public void TestTakingTurnsQueue_AddPlayerMidway()
     {
         var bob = new Person("Bob", 2);
@@ -85,7 +92,11 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (Forever), Sue (3)
     // Run 10 times.
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, Sue, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: Expected Tim, actual Sue. This test kept failing after fixing PersonQueue.cs. 
+    // The problem was in TakingTurnsQueue.cs in the GetNextPerson method.
+    // The condition if (person.Turns < 1) was not adding the person back to the queue, which is required for people with infinite turns accordomg with requirement 4.
+    // Fixed by adding a separate case for person.Turns <1.
+
     public void TestTakingTurnsQueue_ForeverZero()
     {
         var timTurns = 0;
@@ -116,7 +127,8 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Tim (Forever), Sue (3)
     // Run 10 times.
     // Expected Result: Tim, Sue, Tim, Sue, Tim, Sue, Tim, Tim, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: Expected Tim, actual Sue. Same defect as in TestTakingTurnsQueue_ForeverZero.
+    // In this case with negative numbers, the same fix was applied to TakingTurnsQueue.cs in the GetNextPerson method.
     public void TestTakingTurnsQueue_ForeverNegative()
     {
         var timTurns = -3;
@@ -143,7 +155,7 @@ public class TakingTurnsQueueTests
     [TestMethod]
     // Scenario: Try to get the next person from an empty queue
     // Expected Result: Exception should be thrown with appropriate error message.
-    // Defect(s) Found: 
+    // Defect(s) Found: None. This test passed successfully.    
     public void TestTakingTurnsQueue_Empty()
     {
         var players = new TakingTurnsQueue();
