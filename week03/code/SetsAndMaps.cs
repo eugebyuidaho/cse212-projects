@@ -21,9 +21,25 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var results = new List<string>();
+        var seen = new HashSet<string>();
+
+        foreach (var word in words)
+        {
+            if (word[0] == word[1])
+                continue; // Skip words with identical letters, for example "aa".
+
+            var reverse = $"{ word[1]}{ word[0]}";
+
+            if (seen.Contains(reverse))
+                results.Add($"{reverse} & {word}");
+            else
+                seen.Add(word);
+        }
+        return results.ToArray();
     }
+
+
 
     /// <summary>
     /// Read a census file and summarize the degrees (education)
@@ -42,7 +58,11 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            var degree = fields[3].Trim();
+            if (degrees.ContainsKey(degree))
+                degrees[degree]++;
+            else
+                degrees[degree] = degrees.GetValueOrDefault(degree, 0) + 1;
         }
 
         return degrees;
@@ -66,9 +86,37 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var w1 = word1.ToLower().Replace(" ", "");
+        var w2 = word2.ToLower().Replace(" ", "");
+
+        if (w1.Length != w2.Length)
+            return false;
+        
+        var counts = new Dictionary<char, int>();
+        foreach (var c in w1)
+        {
+            if (!counts.ContainsKey(c))
+                counts[c] = 0;
+            counts[c]++;
+        }
+
+        foreach (var c in w2)
+        {
+            if (!counts.ContainsKey(c))
+                return false;
+
+            counts[c]--;
+
+            if (counts[c] < 0)
+                return false;
+        }
+
+        return true;
     }
+
+
+
+
 
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
